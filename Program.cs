@@ -1,4 +1,7 @@
-﻿namespace Labb2
+﻿using Labb2;
+using System.Runtime.CompilerServices;
+
+namespace Labb2
 {
     internal class Program
     {
@@ -6,69 +9,45 @@
         {
 
             Kitchen kitchen = new();
+            int mainMenuChoice = 0;
+
+            do
+            {
+                mainMenuChoice = MainMenu();
 
 
-            MainMenu();
+                switch (mainMenuChoice)
+                {
+                    case 1:
+                        kitchen.SelectAppliance();
+                        //SelectApplianceMenu(kitchen);
+                        break;
+                    case 2:
+                        kitchen.AddAppliance();
+                        break;
+                    case 3:
+                        kitchen.ListAppliances();
+                        break;
+                    case 4:
+                        kitchen.RemoveAppliance();
+                        break;
+                    case 5:
+                        Console.WriteLine("Avslutar...");
+                        break;
+                    default:
+                        Console.WriteLine("Ogiltigt val!");
+                        break;
+                }               
 
-
-
-
-            //1. Välj köksapparat att använda
-            //Skriv ut trasig om den är trasig
-            //annars skriv ut att den används
-            //tillbaka till huvudmeny
-
-            SelectApplianceMenu(kitchen);
-
-            //2. Typ, Märke, Skick "Electrolux","Våffeljärn", "j" j fungerar, n fungerar inte.
-            //Lagra i lista och skriv ut att den lagts till
-            //tillbaka till huvudmeny
-
-            //3. Skriv ut lista på alla apparater
-            //Typ, märke, skick
-            //tillbaka till huvudmeny
-
-            //4. Skriver ut numrerad lista över alla köksapparater
-            //Tar bort apparaten från listan och skriver ut meddelande om att köksapparaten har tagits bort.
-            //tillbaka till huvudmeny
-
-
-            //5. Avslutar huvudmenyn
-
-
-            //lägg till några köksapparater i lista från början
-            //felhantera all inmatning
-
-            //Variabler
-            //Properties
-            //Typkonvertering
-            //Felhantering try,catch
-            //Klasser*
-            //Abstract class*
-            //Interface, bifogad*
-            //Inkapsling
-            //Metoder
-            //Iteration
-            //Selektion
-
-
-
-
-
-
-
-
-
-
-
-
+            }
+            while (mainMenuChoice != 5);
 
 
 
         }
 
 
-        static void MainMenu()
+        static int MainMenu()
         {
             Console.WriteLine("~~~~~~~~~~KÖKET~~~~~~~~~~");
             Console.WriteLine("1. Använd köksapparat");
@@ -76,62 +55,78 @@
             Console.WriteLine("3. Lista köksapparater");
             Console.WriteLine("4. Ta bort köksapparat");
             Console.WriteLine("5. Avsluta");
-            //Console.WriteLine("Ange val: ");
 
             int mainMenuOptions = 5;
             int input = GetValidInput(mainMenuOptions);
 
-
-
-
-        }
-
-        static void SelectApplianceMenu(Kitchen kitchen)
-        {
-
-
+            return input;
 
 
         }
 
+       
 
-
-        static int GetValidInput(int menuOptions)
+        public static int GetValidInput(int menuOptions)
         {
             bool inmatat = false;
             int output = 0;
 
             while (!inmatat)
             {
-                Console.Write("Ange val: ");
-                inmatat = int.TryParse(Console.ReadLine(), out output);
-                if (!inmatat)
-                    Console.WriteLine("Mata in ett heltal tack!");
-                else if (output > menuOptions || output < 1)
+                try
                 {
-                    Console.WriteLine("Ogiltigt val");
-                    inmatat = false;
+                    Console.Write("Ange val: ");
+                    inmatat = int.TryParse(Console.ReadLine(), out output);
+                    if (!inmatat)
+                        Console.WriteLine("Mata in ett heltal tack!");
+                    else if (output > menuOptions || output < 1)
+                    {
+                        Console.WriteLine("Ogiltigt val");
+                        inmatat = false;
+                    }
+
                 }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine("Readline failed with message: " + ex.Message);
+                }
+
             }
             return output;
         }
 
+        public static bool GetValidBool()
+        {
+            char answer = 'c';
+
+            while (answer != 'j' && answer != 'n')
+            {
+                Console.WriteLine("Ange om den fungerar (j/n): ");
+                try
+                {
+
+                    answer = (char)Console.Read();
+                    Console.ReadLine();//Gets rid of pesky "". Don't want to do Console.ReadLine().Trim()[0]
+
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine("Read failed with message: " + ex.Message);
+                }
+            }
+
+            if (answer == 'j')
+                return true;
+            return false;
+
+
+        }
 
 
 
         //Appliance implements interface as an abstract class? to have private methods?
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -142,6 +137,7 @@
     class Kitchen
     {
         List<Appliance> applianceList = new();
+        public int ApplianceCount { get { return this.applianceList.Count; } }
         public Kitchen()
         {
             applianceList.Add(new Appliance { Type = "Microwave Oven", Brand = "Whirpool", IsFunctioning = true });
@@ -150,29 +146,123 @@
 
         }
 
+        void PrintApplianceList()
+        {
+            int applianceNumber = 0;
+            foreach (Appliance appliance in this.applianceList)
+            {
+                Console.WriteLine($"{applianceNumber + 1}. {appliance.Type}");
+                applianceNumber++;
+            }
+        }
+        public void SelectAppliance()
+        {
+
+            Console.WriteLine("Välj Köksapparat:");
+            PrintApplianceList();
+            int input = Program.GetValidInput(this.ApplianceCount) - 1;
 
 
+            this.applianceList[input].Use();
+
+
+        }
+        ///
+        public void AddAppliance()
+        {
+            Appliance newAppliance = new Appliance();
+            try
+            {
+                Console.WriteLine("Ange typ: ");
+                newAppliance.Type = Console.ReadLine();
+
+                Console.WriteLine("Ange märke: ");
+                newAppliance.Brand = Console.ReadLine();
+
+                newAppliance.IsFunctioning = Program.GetValidBool();
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine("Readline failed with message: " + ex.Message);
+            }
+
+            this.applianceList.Add(newAppliance);
+            Console.WriteLine("Tillagd!");
+
+
+        }
+
+        public void ListAppliances()
+        {
+            int applianceNumber = 1;
+            foreach (Appliance appliance in applianceList)
+            {
+                Console.WriteLine($"{applianceNumber}. {appliance.Type,-15} av märke {appliance.Brand,-15} {(appliance.IsFunctioning ? "fungerar" : "fungerar inte")}"); //Yes ternary operator I like it for this...
+                applianceNumber++;
+            }
+
+        }
+
+        public void RemoveAppliance()
+        {
+            PrintApplianceList();
+            int removeIndex = Program.GetValidInput(this.ApplianceCount)-1;
+
+            this.applianceList.RemoveAt(removeIndex);
+
+        }
 
     }
 
 
 
-
-
-
-}
-
-class Appliance : IKitchenAppliance //TODO This seems odd for some reason
-{
-    public string Type { get; set; } //TODO Check for string
-    public string Brand { get; set; }//TODO Check for string
-    public bool IsFunctioning { get; set; }//TODO Check for bool
-
-    public void Use()
+    class Appliance : IKitchenAppliance //TODO This seems odd for some reason
     {
-        Console.WriteLine($"Använder {this.Type}");
+
+        string _type;
+        string _brand;
+
+        public string Type
+        {
+            get { return this._type; }
+            set
+            {
+                if (value != "")
+                    this._type = value;
+                else
+                {
+                    Console.WriteLine("Du måste skriva in en typ:");
+                    this.Type = Console.ReadLine();
+                }
+
+            }
+        }
+        public string Brand
+        {
+            get { return this._brand; }
+            set
+            {
+                if (value != "")
+                    this._brand = value;
+                else
+                {
+                    Console.WriteLine("Du måste skriva in ett märke:");
+                    this.Brand = Console.ReadLine();
+                }
+            }
+        }
+        public bool IsFunctioning { get; set; }
+
+        public void Use()
+        {
+            if (this.IsFunctioning)
+                Console.WriteLine($"Använder {this.Type}...");
+            else
+                Console.WriteLine($"{this.Type} är trasig!");
+
+        }
     }
-}
 
 
 }
