@@ -125,13 +125,6 @@ namespace Labb2
         }
 
 
-
-        //Appliance implements interface as an abstract class? to have private methods?
-
-
-
-
-
     }
 
     class Kitchen
@@ -217,7 +210,7 @@ namespace Labb2
 
 
 
-    class Appliance : IKitchenAppliance //TODO This seems odd for some reason
+    class Appliance : IKitchenAppliance
     {
 
         string _type;
