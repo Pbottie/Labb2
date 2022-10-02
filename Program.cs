@@ -8,7 +8,7 @@ namespace Labb2
         static void Main(string[] args)
         {
 
-            Kitchen kitchen = new();
+            MyKitchen kitchen = new();
             int mainMenuChoice = 0;
 
             do
@@ -127,19 +127,11 @@ namespace Labb2
 
     }
 
-    class Kitchen
-    {
-        List<Appliance> applianceList = new();
-        public int ApplianceCount { get { return this.applianceList.Count; } }
-        public Kitchen()
-        {
-            applianceList.Add(new Appliance { Type = "Microwave Oven", Brand = "Whirpool", IsFunctioning = true });
-            applianceList.Add(new Appliance { Type = "Blender", Brand = "OBH Nordica", IsFunctioning = true });
-            applianceList.Add(new Appliance { Type = "Toaster", Brand = "Toastmaster", IsFunctioning = true });
-
-        }
-
-        void PrintApplianceList()
+    abstract class Kitchen{
+        protected List<Appliance> applianceList = new();
+        protected int ApplianceCount { get { return this.applianceList.Count; } }
+                
+        protected void PrintApplianceList()
         {
             int applianceNumber = 0;
             foreach (Appliance appliance in this.applianceList)
@@ -148,7 +140,26 @@ namespace Labb2
                 applianceNumber++;
             }
         }
-        public void SelectAppliance()
+        public abstract void SelectAppliance();  
+        public abstract void AddAppliance();
+        public abstract void ListAppliances();
+        public abstract void RemoveAppliance();
+
+    }
+
+
+    class MyKitchen : Kitchen
+    {
+
+        public MyKitchen()
+        {
+            applianceList.Add(new Appliance { Type = "Microwave Oven", Brand = "Whirpool", IsFunctioning = true });
+            applianceList.Add(new Appliance { Type = "Blender", Brand = "OBH Nordica", IsFunctioning = true });
+            applianceList.Add(new Appliance { Type = "Toaster", Brand = "Toastmaster", IsFunctioning = true });
+
+        }
+
+        public override void SelectAppliance()
         {
 
             Console.WriteLine("Välj Köksapparat:");
@@ -160,8 +171,8 @@ namespace Labb2
 
 
         }
-        ///
-        public void AddAppliance()
+        
+        public override void AddAppliance()
         {
             Appliance newAppliance = new Appliance();
             try
@@ -186,7 +197,7 @@ namespace Labb2
 
         }
 
-        public void ListAppliances()
+        public override void ListAppliances()
         {
             int applianceNumber = 1;
             foreach (Appliance appliance in applianceList)
@@ -197,7 +208,7 @@ namespace Labb2
 
         }
 
-        public void RemoveAppliance()
+        public override void RemoveAppliance()
         {
             PrintApplianceList();
             int removeIndex = Program.GetValidInput(this.ApplianceCount)-1;
@@ -221,7 +232,7 @@ namespace Labb2
             get { return this._type; }
             set
             {
-                if (value != "")
+                if (value.Trim() != "")
                     this._type = value;
                 else
                 {
@@ -236,7 +247,7 @@ namespace Labb2
             get { return this._brand; }
             set
             {
-                if (value != "")
+                if (value.Trim() != "")
                     this._brand = value;
                 else
                 {
