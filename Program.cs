@@ -129,7 +129,7 @@ namespace Labb2
 
     abstract class Kitchen{
         protected List<Appliance> applianceList = new();
-        protected public int ApplianceCount { get { return this.applianceList.Count; } }
+        protected int ApplianceCount { get { return this.applianceList.Count; } }
                 
         protected void PrintApplianceList()
         {
@@ -232,7 +232,7 @@ namespace Labb2
             get { return this._type; }
             set
             {
-                if (value != "")
+                if (value.Trim() != "")
                     this._type = value;
                 else
                 {
@@ -247,7 +247,7 @@ namespace Labb2
             get { return this._brand; }
             set
             {
-                if (value != "")
+                if (value.Trim() != "")
                     this._brand = value;
                 else
                 {
